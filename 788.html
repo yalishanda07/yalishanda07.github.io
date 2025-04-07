@@ -1,1 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>你的宵夜靈魂是？</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>你的宵夜靈魂是哪一種？</h1>
+    <div id="quiz"></div>
+    <button id="submit">看結果</button>
+    <div id="result"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+body {
+  font-family: sans-serif;
+  background: #1c1c1c;
+  color: #fff;
+  text-align: center;
+  padding: 30px;
+}
 
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: #333;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  margin-top: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+const quizData = [
+  {
+    question: "深夜11點你在幹嘛？",
+    options: [
+      { text: "追劇", type: "sweet" },
+      { text: "還在忙工作/讀書", type: "ramen" },
+      { text: "放空耍廢", type: "cold" },
+      { text: "聊天打電動", type: "fried" }
+    ]
+  },
+  {
+    question: "你吃東西最在乎？",
+    options: [
+      { text: "香氣", type: "fried" },
+      { text: "溫度", type: "ramen" },
+      { text: "甜度", type: "sweet" },
+      { text: "方便", type: "cold" }
+    ]
+  },
+  {
+    question: "你選宵夜的依據是？",
+    options: [
+      { text: "心情", type: "sweet" },
+      { text: "飽足感", type: "ramen" },
+      { text: "快速能吃", type: "cold" },
+      { text: "刺激感", type: "fried" }
+    ]
+  }
+];
+
+const quizContainer = document.getElementById("quiz");
+const resultContainer = document.getElementById("result");
+const submitButton = document.getElementById("submit");
+
+quizData.forEach((q, i) => {
+  const qDiv = document.createElement("div");
+  qDiv.innerHTML = <p>${q.question}</p>;
+  q.options.forEach((opt, idx) => {
+    qDiv.innerHTML += `
+      <label>
+        <input type="radio" name="q${i}" value="${opt.type}"> ${opt.text}
+      </label><br>
+    `;
+  });
+  quizContainer.appendChild(qDiv);
+});
+
+submitButton.addEventListener("click", () => {
+  const selected = document.querySelectorAll("input[type=radio]:checked");
+  if (selected.length < quizData.length) {
+    alert("請完成所有問題！");
+    return;
+  }
+
+  const count = { fried: 0, sweet: 0, ramen: 0, cold: 0 };
+  selected.forEach((radio) => count[radio.value]++);
+  const resultType = Object.keys(count).reduce((a, b) => count[a] > count[b] ? a : b);
+
+  let resultText = "";
+  switch (resultType) {
+    case "fried":
+      resultText = "你是【炸雞勇者】！熱血又不怕油，吃宵夜也要轟轟烈烈！";
+      break;
+    case "sweet":
+      resultText = "你是【甜點療癒師】～需要糖分的溫柔靈魂，最適合深夜治癒自己。";
+      break;
+    case "ramen":
+      resultText = "你是【拉麵哲學家】，湯頭裡藏著思考，溫暖的是胃也是人生。";
+      break;
+    case "cold":
+      resultText = "你是【冷食忍者】，一口御飯糰搞定一切，低調卻高效率。";
+      break;
+  }
+
+  resultContainer.innerHTML = <h2>${resultText}</h2>;
+});
