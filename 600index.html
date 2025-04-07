@@ -71,7 +71,7 @@
 
     quizData.forEach((q, i) => {
       const qDiv = document.createElement("div");
-      qDiv.innerHTML = <p>${q.question}</p>;
+      qDiv.innerHTML = `<p>${q.question}</p>`;
       q.options.forEach((opt, idx) => {
         qDiv.innerHTML += `
           <label>
@@ -109,7 +109,7 @@
           break;
       }
 
-      resultContainer.innerHTML = <h2>${resultText}</h2>;
+      resultContainer.innerHTML = `<h2>${resultText}</h2>`;
     });
   </script>
 </body>
