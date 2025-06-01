@@ -1,1 +1,273 @@
-U1243007
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>你的宵夜靈魂是？</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9 !important;
+      color:  #333;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .result-box {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 16px;
+      cursor: pointer;background-color: #4CAF50; /* 綠色按鈕 */
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }  
+    button.selected {
+      background-color: #4CAF50 !important;
+      color: white !important;
+      border: none;
+    }
+    button:hover {
+       background-color: #45a049;
+    }
+    #optionsBox button {
+      display: block;
+      width: 80%;
+      max-width: 400px;
+      margin: 10px auto;
+      font-size: 16px;
+      padding: 12px 16px;
+    }
+    #result {
+    background: #fff;
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  }
+    button .marker {
+    font-weight: bold;
+    margin-left: 8px;
+}
+</style>
+</head>
+<body>
+  <!-- 首頁容器 -->
+  <div id="home" class="container text-center py-5" style="display: block;">
+    <h1 class="mb-4">歡迎來到宵夜靈魂測驗</h1>
+    <p class="lead">透過測驗，找出屬於你的宵夜人格！</p>
+    <button id="startBtn" class="btn btn-primary btn-lg mt-3">開始測驗</button>
+  </div>
+
+  <!-- 測驗容器 -->
+  <div id="quizPage" class="container py-5" style="display: none;">
+  <h1 class="mb-4 text-center">你的宵夜靈魂是哪一種？</h1>
+  <div id="questionBox" class="mb-4"></div>
+  <div id="optionsBox" class="mb-4"></div>
+  <div class="d-flex justify-content-center gap-3">
+<button id="prevBtn" class="btn btn-secondary">上一題</button>
+  <button id="nextBtn" class="btn btn-primary" disabled>下一題</button>
+  <div id="result" class="mt-4"></div>
+</div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const home = document.getElementById("home");
+      const quizPage = document.getElementById("quizPage");
+      const startBtn = document.getElementById("startBtn");
+      const prevBtn = document.getElementById("prevBtn");
+      const questionBox = document.getElementById("questionBox");
+      const optionsBox = document.getElementById("optionsBox");
+      const nextBtn = document.getElementById("nextBtn");
+      const resultBox = document.getElementById("result");
+    
+      let currentQuestion = 0;
+      let answers = [];
+    
+
+      const quizData = [
+        { question: "深夜11點你在幹嘛？",options: [
+          { text: "追劇", type: "蛋糕甜點師貓貓" },
+          { text: "還在忙工作/讀書", type: "拉麵貓貓" },
+          { text: "放空耍廢", type: "冷食貓貓冷食貓貓" },
+          { text: "聊天打電動", type: "超級炸雞橘貓" }
+        ]},
+      
+        {question: "你吃東西最在乎？", options: [
+         { text: "香氣", type: "超級炸雞橘貓" },
+         { text: "溫度", type: "拉麵貓貓" },
+         { text: "甜度", type: "蛋糕甜點師貓貓" },
+         { text: "方便", type: "冷食貓貓" }
+      ]},
+    
+        {question: "你選宵夜的依據是？",
+        options: [
+          { text: "心情", type: "蛋糕甜點師貓貓" },
+          { text: "飽足感", type: "拉麵貓貓" },
+          { text: "快速能吃", type: "冷食貓貓" },
+          { text: "刺激感", type: "超級炸雞橘貓" }
+      ]},
+      { 
+      
+        question: "以下哪句話最像你？",
+        options: [
+          { text: "我要的是快狠準", type: "冷食貓貓" },
+          { text: "我就是無法抗拒炸物", type: "超級炸雞橘貓" },
+          { text: "熱熱的食物最療癒", type: "拉麵貓貓" },
+          { text: "吃甜點是種儀式感", type: "蛋糕甜點師貓貓" }
+      ]},
+      {
+        question: "你最愛的天氣是？",
+        options: [
+          { text: "晴天適合炸雞與陽光", type: "超級炸雞橘貓" },
+          { text: "冷天配熱湯最讚", type: "拉麵貓貓" },
+          { text: "下雨天配甜點最浪漫", type: "蛋糕甜點師貓貓" },
+          { text: "悶熱的夜晚就想吃冰", type: "冷食貓貓" }
+      ]},
+      {
+        question: "你對半夜肚子餓這件事的態度是？",
+        options: [
+          { text: "想吃就吃，人生太苦不能再餓", type: "超級炸雞橘貓" },
+          { text: "可以等一下，但會找東西填一下胃", type: "拉麵貓貓" },
+          { text: "有點猶豫，要看情緒怎麼流動", type: "蛋糕甜點師貓貓" },
+          { text: "不想花時間處理，能解決就好", type: "冷食貓貓" }
+        ]
+      },
+      {
+        question: "如果你是一種聲音，你會是？",
+        options: [
+          { text: "啪一聲點燃氣氛的開場音", type: "超級炸雞橘貓" },
+          { text: "低頻、穩定、讓人安心的旋律", type: "拉麵貓貓" },
+          { text: "溫柔背景音，默默陪伴", type: "蛋糕甜點師貓貓" },
+          { text: "簡短通知音，有效率不多話", type: "冷食貓貓" }
+        ]
+      },
+      {
+        question: "你吃宵夜的速度？",
+        options: [
+          { text: "速戰速決", type: "冷食貓貓" },
+          { text: "慢慢享受每一口", type: "蛋糕甜點師貓貓" },
+          { text: "邊吃邊哈氣超有感", type: "拉麵貓貓" },
+          { text: "嘎啦嘎啦地爽吃", type: "超級炸雞橘貓" }
+        ]
+      },
+      {
+        question: "你最常在什麼時候想吃宵夜？",
+        options: [
+          { text: "半夜嘴饞想吃點炸的", type: "超級炸雞橘貓" },
+          { text: "熬夜讀書感到疲憊", type: "拉麵" },
+          { text: "壓力大想要療癒一下", type: "蛋糕甜點師貓貓" },
+          { text: "懶得動但想吃點東西", type: "冷食貓貓" }
+        ]
+      },
+      {
+        question: "哪個詞最符合你目前的狀態？",
+        options: [
+          { text: "爆香四溢", type: "超級炸雞橘貓" },
+          { text: "暖呼呼", type: "拉麵貓貓" },
+          { text: "甜而不膩", type: "蛋糕甜點師貓貓" },
+          { text: "冷靜清爽", type: "冷食貓貓" }
+        ]
+      }
+    ];
+
+    function showQuestion(index) {
+      const q = quizData[index];
+      questionBox.innerHTML = `<h4>${index + 1}. ${q.question}</h4>`;
+      optionsBox.innerHTML = "";
+      nextBtn.disabled = true;
+
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt.text;
+        btn.className = "btn btn-outline-secondary m-2";
+        if (answers[index] === opt.type) {
+          btn.classList.add("selected");
+          const marker = document.createElement("span");
+          marker.className = "marker";
+          marker.textContent = "💡";
+          btn.appendChild(marker);
+          nextBtn.disabled = false;
+        }
+        btn.onclick = () => {
+          const allButtons = optionsBox.querySelectorAll("button");
+          allButtons.forEach(b => {
+            b.classList.remove("selected");
+            if (b.querySelector("span.marker")) {
+              b.querySelector("span.marker").remove();
+            }
+          });
+          btn.classList.add("selected");
+          const marker = document.createElement("span");
+          marker.className = "marker";
+          marker.textContent = "💡";
+          btn.appendChild(marker);
+
+          answers[currentQuestion] = opt.type;
+          nextBtn.disabled = false;
+        };
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        showQuestion(currentQuestion);
+      } else {
+        showResult();
+        
+      }
+      nextBtn.disabled = true;
+    });
+
+    function showResult() {
+      questionBox.style.display = "none";
+      optionsBox.style.display = "none";
+      nextBtn.style.display = "none";
+      //prevBtn.style.display = "none";
+
+      const count = { 
+        超級炸雞橘貓: 0, 
+        蛋糕甜點師貓貓: 0, 
+        拉麵貓貓: 0, 
+        冷食貓貓: 0 };
+      answers.forEach(type => count[type]++);
+      const resultType = Object.keys(count).reduce((a, b) => count[a] > count[b] ? a : b);
+      const images = {
+      超級炸雞橘貓: "images/超級炸雞橘貓.png",
+      蛋糕甜點師貓貓: "images/蛋糕甜點師貓貓.png",
+      拉麵貓貓: "images/拉麵貓貓.png",
+      冷食貓貓: "images/冷食貓貓.png"
+    };
+      resultBox.innerHTML = `
+        <h3>你的宵夜靈魂是：${resultType}</h3>
+        <img src="${images[resultType]}" alt="${resultType}" style="max-width: 100%; height: auto; margin-top: 20px;">
+        <br><br>
+        <button onclick="location.reload()" class="btn btn-secondary">回首頁</button>
+      `;
+     }
+
+    startBtn.addEventListener("click", () => {
+      home.style.display = "none";
+      quizPage.style.display = "block";
+      showQuestion(currentQuestion);
+    });
+  });
+</script>
+
