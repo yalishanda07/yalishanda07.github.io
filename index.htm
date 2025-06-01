@@ -19,7 +19,7 @@
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
+    }
     .container {
       max-width: 600px;
       margin: auto;
@@ -235,6 +235,12 @@
       }
       nextBtn.disabled = true;
     });
+    prevBtn.addEventListener("click", () => {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    showQuestion(currentQuestion);
+  }
+});
 
     function showResult() {
       questionBox.style.display = "none";
